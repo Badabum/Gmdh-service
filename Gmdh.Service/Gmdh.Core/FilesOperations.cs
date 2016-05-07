@@ -43,7 +43,7 @@ namespace Gmdh.Core
         /// <param name="filePath"></param>
         /// <param name="separator"></param>
         /// <returns>List of lists of int(two dimensional matrix)</returns>
-        public static List<List<double>> ReadCsvFile(string filePath,char separator=';')
+        public static List<List<double>> ReadTextFile(string filePath,char separator=';')
         {
 
             using (var fileStream = new FileStream(filePath,FileMode.Open,FileAccess.Read))
@@ -61,25 +61,6 @@ namespace Gmdh.Core
                 }
             }
         }
-
-        public static List<List<double>> ReadPlainTextFile(string filePath,char separator=' ')
-        {
-            using (var fileStream = new FileStream(filePath,FileMode.Open,FileAccess.Read))
-            {
-                using (var streamReader = new StreamReader(fileStream))
-                {
-                    var resultList = new List<List<double>>();
-                    while (!streamReader.EndOfStream)
-                    {
-                        var row = streamReader.ReadLine().Split(separator);
-                        var doubles = row.Select(double.Parse);
-                        resultList.Add(doubles.ToList());
-                    }
-                    return resultList;
-                }
-            }
-        } 
-
         private static IExcelDataReader GetExcelReader(string filePath,bool isfirstRowsAsColumnNames=false)
         {
             using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))

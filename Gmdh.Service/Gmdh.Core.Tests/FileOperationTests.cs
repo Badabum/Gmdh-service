@@ -29,19 +29,12 @@ namespace Gmdh.Core.Tests
         {
             var currentDirectory = GetProjectFSPath();
             var filePath = $@"{currentDirectory}/testCSV.csv";
-            var data = FilesOperations.ReadCsvFile(filePath);
+            var data = FilesOperations.ReadTextFile(filePath,';');
             Assert.IsNotNull(data);
         }
 
 
-        [TestMethod]
-        public void ReadValidTextFile_ShouldReturnNotEmptyData()
-        {
-            var currentDirectory = GetProjectFSPath();
-            var filePath = $@"{currentDirectory}/test.txt";
-            var data = FilesOperations.ReadPlainTextFile(filePath);
-            Assert.IsNotNull(data);
-        }
+       
 
         [TestMethod]
         [ExpectedException(typeof(InvalidCastException),"Smth wrong")]
