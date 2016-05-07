@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 
 namespace Gmdh.Core.Tests
 {
@@ -45,6 +47,20 @@ namespace Gmdh.Core.Tests
             FilesOperations.ReadExcelFile(filePath);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof (ArgumentNullException))]
+        public void CreateFile_ThrowException_WhenPathIsEmpty()
+        {
+            var path = string.Empty;
+            FilesOperations.SaveDataIntoFile(path,new double[1][]);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreateFile_ThrowException_WhenPathDataIsNull()
+        {
+            var path = string.Empty;
+            FilesOperations.SaveDataIntoFile(path, null);
+        }
 
         private static string GetSolutionFSPath()
         {

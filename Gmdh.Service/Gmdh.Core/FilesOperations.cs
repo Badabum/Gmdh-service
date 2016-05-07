@@ -38,7 +38,7 @@ namespace Gmdh.Core
         }
 
         /// <summary>
-        /// Reads the csv file with sample data matrix in it.
+        /// Reads the text files with sample data matrix in it.
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="separator"></param>
@@ -59,6 +59,34 @@ namespace Gmdh.Core
                     }
                     return resultList;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Saves data into plain text file
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="array"></param>
+        public static bool SaveDataIntoFile(string filePath, double[][] data)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }
+            using (var fileStream = new FileStream(filePath,FileMode.Create,FileAccess.Write))
+            {
+                using (var streamWriter = new StreamWriter(fileStream))
+                {
+                    foreach (var row in data)
+                    {
+                        streamWriter.WriteLine(string.Join(" ",row));
+                    }
+                }
+                return true;
             }
         }
         private static IExcelDataReader GetExcelReader(string filePath,bool isfirstRowsAsColumnNames=false)
@@ -99,5 +127,6 @@ namespace Gmdh.Core
         {
             return Path.GetExtension(filePath);
         } 
+        
     }
 }
