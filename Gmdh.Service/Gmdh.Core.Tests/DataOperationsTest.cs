@@ -7,10 +7,11 @@ namespace Gmdh.Core.Tests
     [TestClass]
     public class DataOperationsTest
     {
-        [TestMethod]
-        public void DataInitialization_ShouldCreateYVectorFromLastColumn()
+        private List<List<double>> sampleData;
+        [TestInitialize]
+        public void InitializeTest()
         {
-            var sampleData = new List<List<double>>()
+            sampleData = new List<List<double>>()
             {
                 new List<double>()
                 {
@@ -25,6 +26,15 @@ namespace Gmdh.Core.Tests
                     1,2.23,123.123, 123.32,323,4
                 }
             };
+        }
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            sampleData = null;
+        }
+        [TestMethod]
+        public void DataInitialization_ShouldCreateYVectorFromLastColumn()
+        {
             var dataProcessor = new DataOperations();
             dataProcessor.InitializeDataStructures(sampleData);
 
@@ -60,6 +70,15 @@ namespace Gmdh.Core.Tests
             dataProcessor.InitializeDataStructures(sampleData);
             Assert.AreEqual(dataProcessor.CurrentTestDataMatrix.Length,expectedValue.Length);
             Assert.AreEqual(dataProcessor.CurrentTestDataMatrix[0].Length,expectedValue[0].Length);
+        }
+        [TestMethod]
+        public void SplitData_ShouldSplitDataInTwoArrays()
+        {
+            var dataProcessor = new DataOperations();
+            dataProcessor.InitializeDataStructures(sampleData);
+            dataProcessor.SplitData(0.6);
+
+            CollectionAssert.AreEqual(dataProcessor.CheckingData[0],new[] { 1, 2.23, 123.123, 123.32, 323 });   
         }
     }
 }
