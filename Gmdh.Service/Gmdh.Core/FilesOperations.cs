@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Xml;
 using CsvHelper;
 using Excel;
@@ -22,14 +23,14 @@ namespace Gmdh.Core
         {
             var resultList = new List<List<double>>();
 
-            using (IExcelDataReader excelReader = GetExcelReader(filePath))
+            using (IExcelDataReader excelReader = GetExcelReader(filePath,true))
             {
                 var dataSet = excelReader.AsDataSet();
                 var worksheet = dataSet.Tables[0];
                 var rows = GetRows(worksheet);
                 resultList.AddRange(
                     rows.Select(
-                        dataRow => dataRow.ItemArray.Cast<double>().ToList()
+                        dataRow => dataRow.ItemArray.Skip(1).Cast<double>().ToList()
                         )
                     );
 
@@ -89,6 +90,41 @@ namespace Gmdh.Core
                 return true;
             }
         }
+
+        public static List<List<double>> ReadFile(string path)
+        {
+            var fileExtension = Path.GetExtension(path);
+            var data = new List<List<double>>();
+            switch (fileExtension)
+            {
+                case ".xlsx":
+                {
+                    data =  ReadExcelFile(path);
+                    break;
+                }
+                case ".csv":
+                {
+                    data = ReadTextFile(path);
+                        break;
+                }
+                case ".txt":
+                {
+                    data = ReadTextFile(path, ' ');
+                    break;
+                }
+                default:
+                {
+                    throw new ArgumentOutOfRangeException(nameof(fileExtension));
+                }
+            }
+            return data;
+        }
+
+        public static IEnumerable<string> GetFiles(string directoryPath)
+        {
+            var files = Directory.GetFiles(directoryPath);
+            return files.Select(Path.GetFileName);
+        } 
         private static IExcelDataReader GetExcelReader(string filePath,bool isfirstRowsAsColumnNames=false)
         {
             using (FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -113,6 +149,7 @@ namespace Gmdh.Core
                     }
                 }
                 reader.IsFirstRowAsColumnNames = isfirstRowsAsColumnNames;
+                
                 return reader;
             }
         }
@@ -123,6 +160,51 @@ namespace Gmdh.Core
                             select row;
             return resultSet;
         }
+
+        public static string SaveIntoExcelFile(List<double> modelCoeficients,string fileExtension = ".xlsx")
+        {
+            throw new NotImplementedException();
+        }
+
+        public static string SaveExcelFile(List<List<double>> data, string fileExtension = ".xlsx")
+        {
+            throw new NotImplementedException();
+        }
+
+        public static string SaveIntoTextFile(List<List<double>> data,string path)
+        {
+            using (var streamWriter = new StreamWriter(path))
+            {
+                foreach (var dataAsString in data.Select(row => string.Join(" ", row)))
+                {
+                    streamWriter.WriteLine(dataAsString);
+                }
+            }
+            return path;
+        }
+
+        public static string SaveToTextFile(CombiModel combiModel,string path)
+        {
+            using (var streamWriter = new StreamWriter(path))
+            {
+                var algRows = combiModel.AlgorithmRows;
+                var i = 0;
+                foreach (var combiRowModel in algRows)
+                {
+                    streamWriter.WriteLine($"Step #{++i}:");
+                    foreach (var model in combiRowModel.Models)
+                    {
+                        streamWriter.WriteLine(model.ToString());
+                    }
+                    streamWriter.WriteLine($"{combiRowModel.BestModel.ToString()} Outer criteria: {combiRowModel.OuterCriteriaValueOfBestModel}");
+
+                }
+            }
+            return path;
+        }
+
+
+
         private static string GetExtesion(string filePath)
         {
             return Path.GetExtension(filePath);

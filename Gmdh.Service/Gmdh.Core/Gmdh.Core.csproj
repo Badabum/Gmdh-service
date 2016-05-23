@@ -61,9 +61,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgModel.cs" />
     <Compile Include="BooleanArrayEqualityComparer.cs" />
+    <Compile Include="CombiModel.cs" />
+    <Compile Include="CombiRowModel.cs" />
     <Compile Include="DataOperations.cs" />
+    <Compile Include="DataProcessor.cs" />
+    <Compile Include="EquationModel.cs" />
     <Compile Include="FilesOperations.cs" />
+    <Compile Include="GmdhAlgorithmBase.cs" />
+    <Compile Include="GmdhMia.cs" />
+    <Compile Include="GmdhMulti.cs" />
+    <Compile Include="GmdhRia.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
